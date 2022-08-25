@@ -9,10 +9,7 @@ export enum langs {
 
 export interface Language {
     name: string
-    messages: {}
-    menuEntries: {}
-    settings: {},
-    texts: {}
+
 }
 export interface Configuration {
     language: langs,
@@ -24,10 +21,6 @@ export const plugin = new Plugin(
     },
     {
         name: 'World Edit',
-        messages: {},
-        settings: {},
-        menuEntries: {},
-        texts: {}
     },
 );
 
