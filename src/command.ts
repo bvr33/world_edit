@@ -1,42 +1,71 @@
-import { events } from "bdsx/event";
-import { command } from "bdsx/command";
-import { CommandPermissionLevel } from "bdsx/bds/command";
-import { plugin } from ".";
-import { int32_t } from "bdsx/nativetype";
-import { Player, ServerPlayer } from "bdsx/bds/player";
-import { bedrockServer } from "bdsx/launcher";
-import { BlockPos } from "bdsx/bds/blockpos";
-import { Block } from "bdsx/bds/block";
-import { UpdateBlockPacket } from "bdsx/bds/packets";
+import { events } from "bdsx/event"
+import { command } from "bdsx/command"
+import { CommandPermissionLevel } from "bdsx/bds/command"
+import { plugin } from "."
+import { int32_t } from "bdsx/nativetype"
+import { Player, ServerPlayer } from "bdsx/bds/player"
+import { bedrockServer } from "bdsx/launcher"
+import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
+import { Block } from "bdsx/bds/block"
+import { LevelSoundEventPacketV1, PackType, PlayerActionPacket, UpdateBlockPacket } from "bdsx/bds/packets"
+import { worldedit } from "./modules/worldedit"
+import { ItemUseEvent, ItemUseOnBlockEvent, PlayerAttackEvent, PlayerUseItemEvent } from "bdsx/event_impl/entityevent"
+import { CANCEL } from "bdsx/common"
+import { Actor } from "bdsx/bds/actor"
+import { MinecraftPacketIds } from "bdsx/bds/packetids"
+import { BlockAttackEvent } from "bdsx/event_impl/blockevent"
 
 events.serverOpen.on(
     () => {
 
-        const cmd = command.register( '/up', 'world edit Up', CommandPermissionLevel.Operator )
+        command.register( 'up', 'world edit Up', CommandPermissionLevel.Operator )
+            .overload(
+                async ( param, origin, _output ) => {
+                    if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
+                    const player = origin.getEntity()
+                    if( !player?.isPlayer() ) return
 
-        cmd.overload(
-            ( param, origin, _output ) => {
-                if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red );
-                const player = origin.getEntity()
-                if( !player?.isPlayer() ) return
+                    worldedit.up( player, param.value )
+                },
+                {
+                    value: [int32_t, true]
+                }
+            )
 
-                const playerPos = player.getPosition()
-                const pos = player.getPosition()
-                if( param.value ) playerPos.y += param.value
-                else playerPos.y += 1
-                pos.y = playerPos.y - 1
-                const region = player.getRegion()
-                const blockPos = BlockPos.create( pos )
-                const block = Block.create( 'minecraft:glass' )!
+        command.register( 'worldedit', 'get world edit wand', CommandPermissionLevel.Operator )
+            .alias( 'we' )
+            .overload(
+                async ( _params, origin, _output ) => {
+                    if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
+                    const player = origin.getEntity()
+                    if( !player?.isPlayer() ) return
 
+                    worldedit.getWand( player )
+                }
+                , {}
+            )
 
-                player.teleport( pos )
-                region.setBlock( blockPos, block )
-
-            },
-            {
-                value: [int32_t, true]
-            }
-        )
     }
 )
+
+
+
+
+
+
+events.attackBlock.on(
+    async ( ev: BlockAttackEvent ) => {
+        if( !ev.player?.isPlayer() || !worldedit.IsWand( ev.player.getMainhandSlot() ) ) return
+        worldedit.setPos( ev.player, worldedit.WE_POS_ID.pos1, ev.blockPos )
+    }
+)
+
+
+events.itemUseOnBlock.on(
+    ( ev: ItemUseOnBlockEvent ) => {
+        if( !ev.actor.isPlayer() || !worldedit.IsWand( ev.actor.getMainhandSlot() ) ) return
+        if( !worldedit.canSetPos( ev.actor ) ) return
+        worldedit.setPos( ev.actor, worldedit.WE_POS_ID.pos2, BlockPos.create( ev.x, ev.y, ev.z ) )
+    }
+)
+
