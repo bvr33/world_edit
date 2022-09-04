@@ -1,19 +1,9 @@
 import { events } from "bdsx/event"
 import { command } from "bdsx/command"
 import { CommandPermissionLevel } from "bdsx/bds/command"
-import { plugin } from "."
 import { int32_t } from "bdsx/nativetype"
-import { Player, ServerPlayer } from "bdsx/bds/player"
-import { bedrockServer } from "bdsx/launcher"
-import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
-import { Block } from "bdsx/bds/block"
-import { LevelSoundEventPacketV1, PackType, PlayerActionPacket, UpdateBlockPacket } from "bdsx/bds/packets"
 import { worldedit } from "./modules/worldedit"
-import { ItemUseEvent, ItemUseOnBlockEvent, PlayerAttackEvent, PlayerUseItemEvent } from "bdsx/event_impl/entityevent"
-import { CANCEL } from "bdsx/common"
-import { Actor } from "bdsx/bds/actor"
-import { MinecraftPacketIds } from "bdsx/bds/packetids"
-import { BlockAttackEvent } from "bdsx/event_impl/blockevent"
+
 
 events.serverOpen.on(
     () => {
