@@ -1,14 +1,25 @@
 import { Block } from "bdsx/bds/block"
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
-import { CommandItem } from "bdsx/bds/command"
 import { ItemStack } from "bdsx/bds/inventory"
 import { ByteTag, CompoundTag, NBT } from "bdsx/bds/nbt"
 import { Player, ServerPlayer } from "bdsx/bds/player"
+import { StructureManager } from "bdsx/bds/structure"
 import { bedrockServer } from "bdsx/launcher"
 import { TextFormat } from "bdsx/util"
+import { plugin } from ".."
 
 export namespace worldedit {
+
+    type POS = Vec3 | BlockPos
+
+    export enum POS_ID {
+        pos1,
+        pos2
+    }
+
     const playerCanSetPost2 = new Map<string, null>()
+
+    export const POS_MAP = new Map<string, [POS | null, POS | null]>()
 
     export function canSetPos( xuid: string ): boolean {
         if( playerCanSetPost2.has( xuid ) ) return false
@@ -23,32 +34,15 @@ export namespace worldedit {
         return true
     }
 
-    type POS = Vec3 | BlockPos
-    const POS_MAP = new Map<string, { pos1: POS | undefined, pos2: POS | undefined }>()
-
-    export enum WE_POS_ID {
-        pos1,
-        pos2
-    }
-
-    export function setPos( player: Player, posId: WE_POS_ID, pos: POS ): void {
+    export function setPos( player: Player, posId: POS_ID, pos: POS ): void {
         if( !player.isPlayer() ) return
         const xuid = player.getXuid()
-        if( !POS_MAP.has( xuid ) ) POS_MAP.set( xuid, { pos1: undefined, pos2: undefined } )
-        let message
-        const postions = POS_MAP.get( xuid )!
-        switch( posId ) {
-            case WE_POS_ID.pos1:
-                postions.pos1 = pos
-                message = `${TextFormat.GREEN}POS1`
-                break
-            case WE_POS_ID.pos2:
-                postions.pos2 = pos
-                message = `${TextFormat.GREEN}POS2`
-                break
-        }
-        player.sendMessage( message + ` ${TextFormat.RED}=> ${TextFormat.GREEN}X:${TextFormat.RESET}${pos.x} ${TextFormat.GREEN}Y:${TextFormat.RESET}${pos.y} ${TextFormat.GREEN}Z:${TextFormat.RESET}${pos.z}` )
-        console.log( JSON.stringify( POS_MAP.get( xuid ) ) )
+        if( !POS_MAP.has( xuid ) ) POS_MAP.set( xuid, [null, null] )
+        let postions = POS_MAP.get( xuid )!
+        postions[posId] = BlockPos.create( pos )
+        POS_MAP.set( xuid, postions )
+        console.log( JSON.stringify( postions ) )
+        player.sendMessage( `${TextFormat.GREEN}POS${posId + 1} ${TextFormat.RED}=> ${TextFormat.GREEN}X:${TextFormat.RESET}${pos.x} ${TextFormat.GREEN}Y:${TextFormat.RESET}${pos.y} ${TextFormat.GREEN}Z:${TextFormat.RESET}${pos.z}` )
     }
 
 
@@ -63,7 +57,7 @@ export namespace worldedit {
 
     export function getWand( player: ServerPlayer ): void {
         const wand = ItemStack.constructWith( 'minecraft:wooden_sword', 1 )
-        wand.setCustomName( `${TextFormat.RED}Wand` )
+        wand.setCustomName( `${TextFormat.RED}WorldEdit Wand` )
         wand.setCustomLore( `${TextFormat.GRAY}WorldEdit ${TextFormat.YELLOW}Tool` )
         const oldTag = wand.save()
         const wandTag = NBT.allocate( {
@@ -95,5 +89,40 @@ export namespace worldedit {
         player.sendTip( `Up ${message}` )
         region.setBlock( blockPos, block )
     }
-}
 
+    export function fillBlocks( player: Player, block: Block ) {
+        if( !player.isPlayer() ) return
+        const xuid = player.getXuid()
+        if( !POS_MAP.has( xuid ) ) return
+        const area = POS_MAP.get( xuid )
+        if( area == undefined ) return
+        if( area[0] == null || area[1] == null ) {
+            player.sendMessage( 'You must set POS1 & POS2 to execute this command' )
+            return
+        }
+        const pos = {
+            x: [area[0].x, area[1].x].sort( ( a, b ) => a - b ),
+            y: [area[0].y, area[1].y].sort( ( a, b ) => a - b ),
+            z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
+        }
+        const blocksAmount = ( pos.x[1] - pos.x[0] + 1 ) * ( pos.y[1] - pos.y[0] + 1 ) * ( pos.z[1] - pos.z[0] + 1 )
+        plugin.log( '' + blocksAmount )
+        console.log( JSON.stringify( pos ) )
+        const region = player.getRegion()
+        for( let x = pos.x[0]; x <= pos.x[1]; x++ ) {
+            for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
+                for( let z = pos.z[0]; z <= pos.z[1]; z++ ) {
+                    async () => {
+                        region.setBlock( BlockPos.create( x, y, z ), block )
+                        /**     test
+                         plugin.log( `BLOCK POS ==> ${x} - ${y} - ${z}` )
+                         */
+                    }
+                }
+            }
+
+        }
+
+
+    }
+}

@@ -1,6 +1,6 @@
 import { Plugin } from "./utils/plugin"
 import { events } from "bdsx/event"
-import './modules/wand_events'
+import './modules/events'
 import './command'
 
 export enum langs {
