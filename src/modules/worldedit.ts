@@ -6,14 +6,11 @@ import { ByteTag, CompoundTag, NBT } from "bdsx/bds/nbt"
 import { Player, ServerPlayer } from "bdsx/bds/player"
 import { bedrockServer } from "bdsx/launcher"
 import { TextFormat } from "bdsx/util"
-import { type } from "os"
-import { plugin } from ".."
 
 export namespace worldedit {
     const playerCanSetPost2 = new Map<string, null>()
 
-    export function canSetPos( player: ServerPlayer ): boolean {
-        const xuid = player.getXuid()
+    export function canSetPos( xuid: string ): boolean {
         if( playerCanSetPost2.has( xuid ) ) return false
         playerCanSetPost2.set( xuid, null )
         setTimeout(
