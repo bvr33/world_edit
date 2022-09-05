@@ -106,8 +106,10 @@ export namespace worldedit {
             z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
         }
         const blocksAmount = ( pos.x[1] - pos.x[0] + 1 ) * ( pos.y[1] - pos.y[0] + 1 ) * ( pos.z[1] - pos.z[0] + 1 )
-        plugin.log( '' + blocksAmount )
-        console.log( JSON.stringify( pos ) )
+        if( blocksAmount > 100000 ) {
+            player.sendMessage( `TOO many Blocks ${blocksAmount} > 100000` )
+            return
+        }
         const region = player.getRegion()
         for( let x = pos.x[0]; x <= pos.x[1]; x++ ) {
             for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {

@@ -4,6 +4,7 @@ import { Command, CommandPermissionLevel } from "bdsx/bds/command"
 import { int32_t } from "bdsx/nativetype"
 import { worldedit } from "./modules/worldedit"
 import { Block } from "bdsx/bds/block"
+import { BlockPos } from "bdsx/bds/blockpos"
 
 
 events.serverOpen.on(
@@ -51,6 +52,23 @@ events.serverOpen.on(
                 {
                     block: Command.Block,
                     data: [int32_t, true]
+                }
+            )
+        command.register( 'pos', 'Wordld Edit set POSITION', CommandPermissionLevel.Operator )
+            .overload(
+                async ( param, origin, _out ) => {
+                    if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
+                    const player = origin.getEntity()
+                    if( !player?.isPlayer() ) return
+                    const playerPos = player.getFeetPos().floor()
+                    let posId
+                    if( param.Posid == '2' ) posId = worldedit.POS_ID.pos2
+                    else posId = worldedit.POS_ID.pos1
+
+                    worldedit.setPos( player, posId, BlockPos.create( playerPos ) )
+                },
+                {
+                    Posid: [command.enum( 'id', '1', '2' ), true]
                 }
             )
 
