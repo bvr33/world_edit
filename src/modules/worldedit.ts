@@ -105,7 +105,7 @@ export namespace worldedit {
             bedrockServer.executeCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`, true )
         }
         const blockAmount = ( pos.x[1] - pos.x[0] + 1 ) * ( pos.y[1] - pos.y[0] + 1 ) * ( pos.z[1] - pos.z[0] + 1 )
-        player.sendMessage( `You place ${TextFormat.YELLOW}${blockAmount}${TextFormat.RESET} blocks `)
+        player.sendMessage( `You place ${TextFormat.YELLOW}${blockAmount}${TextFormat.RESET} blocks ` )
     }
 
 
