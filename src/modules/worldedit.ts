@@ -102,7 +102,7 @@ export namespace worldedit {
             z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
         }
         for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
-            player.runCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`, true )
+            bedrockServer.executeCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`, true )
         }
     }
 
