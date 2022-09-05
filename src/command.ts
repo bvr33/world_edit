@@ -1,10 +1,11 @@
 import { events } from "bdsx/event"
 import { command } from "bdsx/command"
-import { Command, CommandPermissionLevel } from "bdsx/bds/command"
+import { Command, CommandPermissionLevel, CommandPosition } from "bdsx/bds/command"
 import { int32_t } from "bdsx/nativetype"
 import { worldedit } from "./modules/worldedit"
 import { Block } from "bdsx/bds/block"
-import { BlockPos } from "bdsx/bds/blockpos"
+import { BlockPos, RelativeFloat, Vec3 } from "bdsx/bds/blockpos"
+import { helpers } from "./utils/helpers"
 
 
 events.serverOpen.on(
@@ -56,29 +57,39 @@ events.serverOpen.on(
             )
 
         command.register( 'pos1', 'World Edit set POS1', CommandPermissionLevel.Operator )
+            .alias( 'p1' )
             .overload(
-                async ( _param, origin, _out ) => {
+                async ( param, origin, _out ) => {
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
                     const player = origin.getEntity()
                     if( !player?.isPlayer() ) return
                     const playerPos = player.getFeetPos().floor()
-
-                    worldedit.setPos( player, worldedit.POS_ID.pos1, BlockPos.create( playerPos ) )
+                    const pos = param.position
+                        ? helpers.relativeToCoords( playerPos, param.position )
+                        : playerPos
+                    worldedit.setPos( player, worldedit.POS_ID.pos1, BlockPos.create( pos ) )
                 },
-                {}
+                {
+                    position: [CommandPosition, true]
+                }
             )
 
         command.register( 'pos2', 'World Edit set POS2', CommandPermissionLevel.Operator )
+            .alias( 'p2' )
             .overload(
-                async ( _param, origin, _out ) => {
+                async ( param, origin, _out ) => {
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
                     const player = origin.getEntity()
                     if( !player?.isPlayer() ) return
                     const playerPos = player.getFeetPos().floor()
-
-                    worldedit.setPos( player, worldedit.POS_ID.pos2, BlockPos.create( playerPos ) )
+                    const pos = param.position
+                        ? helpers.relativeToCoords( playerPos, param.position )
+                        : playerPos
+                    worldedit.setPos( player, worldedit.POS_ID.pos2, BlockPos.create( pos ) )
                 },
-                {}
+                {
+                    position: [CommandPosition, true]
+                }
             )
 
 
