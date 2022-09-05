@@ -1,13 +1,11 @@
 import { Block, BlockSource } from "bdsx/bds/block"
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
-import { Command, CommandPermissionLevel } from "bdsx/bds/command"
 import { ItemStack } from "bdsx/bds/inventory"
 import { ByteTag, CompoundTag, NBT } from "bdsx/bds/nbt"
 import { Player, ServerPlayer } from "bdsx/bds/player"
 import { StructureManager } from "bdsx/bds/structure"
 import { bedrockServer } from "bdsx/launcher"
 import { TextFormat } from "bdsx/util"
-import { plugin } from ".."
 
 export namespace worldedit {
 
