@@ -42,7 +42,6 @@ export namespace worldedit {
         let postions = POS_MAP.get( xuid )!
         postions[posId] = BlockPos.create( pos )
         POS_MAP.set( xuid, postions )
-        console.log( JSON.stringify( postions ) )
         player.sendMessage( `${TextFormat.GREEN}POS${posId + 1} ${TextFormat.RED}=> ${TextFormat.GREEN}X:${TextFormat.RESET}${pos.x} ${TextFormat.GREEN}Y:${TextFormat.RESET}${pos.y} ${TextFormat.GREEN}Z:${TextFormat.RESET}${pos.z}` )
     }
 
@@ -105,9 +104,7 @@ export namespace worldedit {
             z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
         }
         for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
-            let cmd = `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`
-            console.log( cmd )
-            player.runCommand( cmd, false )
+            player.runCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`, true )
         }
     }
 
