@@ -4,7 +4,7 @@ import { Command, CommandPermissionLevel, CommandPosition } from "bdsx/bds/comma
 import { int32_t } from "bdsx/nativetype"
 import { worldedit } from "./modules/worldedit"
 import { Block } from "bdsx/bds/block"
-import { BlockPos, RelativeFloat, Vec3 } from "bdsx/bds/blockpos"
+import { BlockPos, } from "bdsx/bds/blockpos"
 import { helpers } from "./utils/helpers"
 
 
@@ -56,8 +56,8 @@ events.serverOpen.on(
                 }
             )
 
-        command.register( 'pos1', 'World Edit set POS1', CommandPermissionLevel.Operator )
-            .alias( 'p1' )
+        command.register( '.pos1', 'World Edit set POS1', CommandPermissionLevel.Operator )
+            .alias( '.p1' )
             .overload(
                 async ( param, origin, _out ) => {
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
@@ -74,8 +74,8 @@ events.serverOpen.on(
                 }
             )
 
-        command.register( 'pos2', 'World Edit set POS2', CommandPermissionLevel.Operator )
-            .alias( 'p2' )
+        command.register( '.pos2', 'World Edit set POS2', CommandPermissionLevel.Operator )
+            .alias( '.p2' )
             .overload(
                 async ( param, origin, _out ) => {
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
