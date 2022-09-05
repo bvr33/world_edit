@@ -1,3 +1,1 @@
-
-# world_edit Plugin
-The plugin for bdsx
+# world_edit Plugin for bdsx
