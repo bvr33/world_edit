@@ -77,7 +77,6 @@ export namespace worldedit {
 
     export function up( player: ServerPlayer, amount: number | undefined ): void {
         const playerPos = player.getPosition()
-        const message = amount || 1
         if( amount ) playerPos.y += amount - 1
 
         const region = player.getRegion()
@@ -86,7 +85,7 @@ export namespace worldedit {
         const block = Block.create( 'minecraft:glass' )!
 
         player.teleport( playerPos )
-        player.sendTip( `Up ${message}` )
+        player.sendTip( `Up ${amount || 1}` )
         region.setBlock( blockPos, block )
     }
 
