@@ -1,6 +1,6 @@
 import { Block, BlockSource } from "bdsx/bds/block"
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
-import { Command } from "bdsx/bds/command"
+import { Command, CommandPermissionLevel } from "bdsx/bds/command"
 import { ItemStack } from "bdsx/bds/inventory"
 import { ByteTag, CompoundTag, NBT } from "bdsx/bds/nbt"
 import { Player, ServerPlayer } from "bdsx/bds/player"
@@ -105,7 +105,9 @@ export namespace worldedit {
             z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
         }
         for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
-            player.runCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block}`, true )
+            let cmd = `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block.getName()} ${block.getVariant()}`
+            console.log( cmd )
+            player.runCommand( cmd, false )
         }
     }
 
