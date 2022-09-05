@@ -44,33 +44,46 @@ events.serverOpen.on(
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
                     const player = origin.getEntity()
                     if( !player?.isPlayer() ) return
-
-                    if( param.data ) param.block.data = param.data
-                    worldedit.fillBlocks( player, param.block )
+                    const block = Block.create( param.block.getName(), param.variant || 0 )
+                    if( !block ) return
+                    worldedit.fillBlocks( player, block )
 
                 },
                 {
                     block: Command.Block,
-                    data: [int32_t, true]
+                    variant: [int32_t, true]
                 }
             )
-        command.register( 'pos', 'Wordld Edit set POSITION', CommandPermissionLevel.Operator )
+
+        command.register( 'pos1', 'World Edit set POS1', CommandPermissionLevel.Operator )
             .overload(
-                async ( param, origin, _out ) => {
+                async ( _param, origin, _out ) => {
                     if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
                     const player = origin.getEntity()
                     if( !player?.isPlayer() ) return
                     const playerPos = player.getFeetPos().floor()
-                    let posId
-                    if( param.Posid == '2' ) posId = worldedit.POS_ID.pos2
-                    else posId = worldedit.POS_ID.pos1
 
-                    worldedit.setPos( player, posId, BlockPos.create( playerPos ) )
+                    worldedit.setPos( player, worldedit.POS_ID.pos1, BlockPos.create( playerPos ) )
                 },
-                {
-                    Posid: [command.enum( 'id', '1', '2' ), true]
-                }
+                {}
             )
+
+        command.register( 'pos2', 'World Edit set POS2', CommandPermissionLevel.Operator )
+            .overload(
+                async ( _param, origin, _out ) => {
+                    if( origin.isServerCommandOrigin() ) return console.log( 'This command can only be executed by players'.red )
+                    const player = origin.getEntity()
+                    if( !player?.isPlayer() ) return
+                    const playerPos = player.getFeetPos().floor()
+
+                    worldedit.setPos( player, worldedit.POS_ID.pos2, BlockPos.create( playerPos ) )
+                },
+                {}
+            )
+
+
+
+
 
     }
 )

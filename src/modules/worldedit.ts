@@ -1,5 +1,6 @@
-import { Block } from "bdsx/bds/block"
+import { Block, BlockSource } from "bdsx/bds/block"
 import { BlockPos, Vec3 } from "bdsx/bds/blockpos"
+import { Command } from "bdsx/bds/command"
 import { ItemStack } from "bdsx/bds/inventory"
 import { ByteTag, CompoundTag, NBT } from "bdsx/bds/nbt"
 import { Player, ServerPlayer } from "bdsx/bds/player"
@@ -94,8 +95,7 @@ export namespace worldedit {
         const xuid = player.getXuid()
         if( !POS_MAP.has( xuid ) ) return
         const area = POS_MAP.get( xuid )
-        if( area == undefined ) return
-        if( area[0] == null || area[1] == null ) {
+        if( area === undefined || area[0] === null || area[1] === null ) {
             player.sendMessage( 'You must set POS1 & POS2 to execute this command' )
             return
         }
@@ -104,26 +104,13 @@ export namespace worldedit {
             y: [area[0].y, area[1].y].sort( ( a, b ) => a - b ),
             z: [area[0].z, area[1].z].sort( ( a, b ) => a - b )
         }
-        const blocksAmount = ( pos.x[1] - pos.x[0] + 1 ) * ( pos.y[1] - pos.y[0] + 1 ) * ( pos.z[1] - pos.z[0] + 1 )
-        if( blocksAmount > 100000 ) {
-            player.sendMessage( `TOO many Blocks ${blocksAmount} > 100000` )
-            return
+        for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
+            player.runCommand( `fill ${pos.x[0]} ${y} ${pos.z[0]} ${pos.x[1]} ${y} ${pos.z[1]} ${block}`, true )
         }
-        const region = player.getRegion()
-        for( let x = pos.x[0]; x <= pos.x[1]; x++ ) {
-            for( let y = pos.y[0]; y <= pos.y[1]; y++ ) {
-                for( let z = pos.z[0]; z <= pos.z[1]; z++ ) {
-                    async () => {
-                        region.setBlock( BlockPos.create( x, y, z ), block )
-                        /**     test
-                         plugin.log( `BLOCK POS ==> ${x} - ${y} - ${z}` )
-                         */
-                    }
-                }
-            }
-
-        }
-
-
     }
+
+
+
+
+
 }
