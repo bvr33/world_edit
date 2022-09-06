@@ -2,7 +2,6 @@ import { Plugin } from "./utils/plugin"
 import { events } from "bdsx/event"
 import './modules/events'
 import './command'
-import { command } from "bdsx/command"
 
 export enum langs {
     PL = "PL_pl"
